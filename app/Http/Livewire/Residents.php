@@ -9,7 +9,6 @@ use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\Paginator;
 
-
 class Residents extends Component
 {
     use WithPagination;
@@ -22,12 +21,27 @@ class Residents extends Component
     protected $paginationTheme = 'bootstrap';
 
     public function render()
-{
-    $residents = $this->getResidentList()->paginate(10);
-    $selectedResident = $this->selectedResident ?? new Resident();
-
-    return view('livewire.residents', compact('residents', 'selectedResident'));
-}
+    {
+        $residents = $this->getResidentList()->paginate(10);
+        $selectedResident = $this->selectedResident ?? new Resident();
+    
+        return view('livewire.residents', compact('residents', 'selectedResident'));
+    }
+    
+    public function getResidentList()
+    {
+        $query = Resident::query();
+    
+        if ($this->searchTerm) {
+            $query->where(function ($q) {
+                $q->where('FirstName', 'LIKE', '%' . $this->searchTerm . '%')
+                    ->orWhere('LastName', 'LIKE', '%' . $this->searchTerm . '%');
+            });
+        }
+    
+        return $query->orderBy('id', 'DESC');
+    }
+    
 
     public function delete($id)
     {
@@ -119,44 +133,5 @@ class Residents extends Component
         $this->CivilStatus = null;
     }
 
-    public function getResidentList()
-{
-    $query = Resident::query();
-
-    if ($this->searchTerm) {
-        $query->where(function ($q) {
-            $q->where('FirstName', 'LIKE', '%' . $this->searchTerm . '%')
-                ->orWhere('LastName', 'LIKE', '%' . $this->searchTerm . '%');
-        });
-    }
-
-    return $query->orderBy('id', 'DESC')->paginate(10);
-}
-
-
-
-
-
-
-
-public function showDetails($residentId)
-{
-    // Fetch the resident details from the database
-    $resident = Resident::find($residentId);
-
-    if ($resident) {
-        // Assign the resident details to the selectedResident property
-        $this->selectedResident = $resident;
-
-        // Open the modal
-        $this->dispatchBrowserEvent('openModal', [
-            'title' => 'Resident Details',
-            'content' => view('livewire.resident-details-modal', [
-                'resident' => $this->selectedResident,
-            ]),
-        ]);
-    }
-}
-
-
+   
 }

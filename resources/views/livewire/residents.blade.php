@@ -77,13 +77,13 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-end">
-                @isset($forUpdate)                           
-                @if($forUpdate)
-                    <button class="btn btn-primary" wire:click="updateResident('{{ $L->id }}')">Update</button>
-                @else
-                    <button class="btn btn-primary" wire:click="saveResident">Save</button>
-                @endif
-                @endisset
+                    @isset($forUpdate)
+                        @if($forUpdate && $selectedResident)
+                            <button class="btn btn-primary" wire:click="updateResident">Update</button>
+                        @else
+                            <button class="btn btn-primary" wire:click="saveResident">Save</button>
+                        @endif
+                    @endisset
                 </div>
             </div>
         </form>
@@ -122,7 +122,6 @@
                         <td>
                             <button class="btn btn-info btn-sm" wire:click="update('{{ $resident->id }}')">Edit</button>
                             <button class="btn btn-danger btn-sm" wire:click="delete('{{ $resident->id }}')">Delete</button>
-                            <button class="btn btn-primary btn-sm" wire:click="showDetails('{{ $resident->id }}')">View Details</button>
                         </td>
                     </tr>
                 @endforeach
@@ -133,32 +132,5 @@
     <!-- Pagination Links -->
     <div class="mt-4">
         {{ $residents->links() }}
-    </div>
-
-    <!-- Resident Details Modal -->
-    <div class="modal fade" id="residentDetailsModal" tabindex="-1" role="dialog" aria-labelledby="residentDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="residentDetailsModalLabel">Resident Details</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <!-- Display resident details -->
-                    <p>First Name: {{ $selectedResident->FirstName }}</p>
-                    <p>Middle Name: {{ $selectedResident->MiddleName }}</p>
-                    <p>Last Name: {{ $selectedResident->LastName }}</p>
-                    <p>Suffix: {{ $selectedResident->Suffix }}</p>
-                    <p>Date of Birth: {{ $selectedResident->DOB }}</p>
-                    <p>Place of Birth: {{ $selectedResident->PlaceofBirth }}</p>
-                    <p>Civil Status: {{ $selectedResident->CivilStatus }}</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
